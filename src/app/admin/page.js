@@ -870,7 +870,7 @@ export default function AdminPage() {
                       id="addSpicy"
                       checked={addSpicy}
                       onChange={(e) => setAddSpicy(e.target.checked)}
-                      className="w-4.5 h-4.5 accent-largo-primary rounded border-white/10 bg-black"
+                      className="w-4 h-4 accent-largo-primary rounded border-white/10 bg-black"
                     />
                     <label htmlFor="addSpicy" className="text-xs font-bold text-largo-text-primary cursor-pointer select-none">
                       Spicy Recipe (Adds Flame Indicator)

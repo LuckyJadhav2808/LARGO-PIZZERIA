@@ -28,9 +28,20 @@ export default function Navbar() {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Left - Custom Nav Links Grid (Desktop) */}
+          {/* Left Block (1/4 width on mobile, 1/3 width on desktop) */}
+          {/* Mobile: Hamburger Menu Button */}
+          {/* Desktop: Custom Nav Links Grid */}
+          <div className="flex md:hidden w-1/4 justify-start">
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="p-2 rounded-md text-largo-text-muted hover:text-largo-text-primary focus:outline-none cursor-pointer"
+              aria-label="Toggle Mobile Menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
           <div className="hidden md:flex items-center space-x-8 w-1/3 justify-start py-2">
-            
             {/* Column 1: Boxed HOME & OUTLETS */}
             <div className="flex flex-col items-center">
               <Link 
@@ -96,30 +107,20 @@ export default function Navbar() {
                 STORY
               </Link>
             </div>
-
           </div>
 
-          {/* Center - Brand Logo Emblem + Typography (Horizontal Lockup) */}
-          <div className="flex-1 md:flex-none flex justify-start md:justify-center md:w-1/3">
+          {/* Center Block - Brand Logo (2/4 width on mobile, 1/3 width on desktop) */}
+          <div className="flex justify-center w-2/4 md:w-1/3">
             <Link href="/" className="group flex items-center space-x-2 transition duration-300 select-none">
-              <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[46px] w-auto">
+              <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[42px] sm:h-[46px] w-auto">
                 {/* Circular Badge Icon */}
                 <g className="group-hover:rotate-12 transition-transform duration-500 origin-[20px_20px]">
-                  {/* Outer Arch Ring */}
                   <circle cx="20" cy="20" r="18" stroke="#E2953B" strokeWidth="1.5" strokeDasharray="3 3" />
                   <circle cx="20" cy="20" r="15" stroke="#C84B31" strokeWidth="1" />
-                  
-                  {/* Woodfire Oven Arch */}
                   <path d="M12 24 C 12 14, 28 14, 28 24" stroke="#E2953B" strokeWidth="1.5" strokeLinecap="round" />
-                  
-                  {/* Pizza Slice inside Arch */}
                   <path d="M20 15 L16 23 L24 23 Z" fill="#E2953B" />
-                  
-                  {/* Fire steam / sparks */}
                   <path d="M18 12 Q20 10 20 13" stroke="#C84B31" strokeWidth="1" strokeLinecap="round" />
                   <path d="M22 13 Q20 11 22 10" stroke="#C84B31" strokeWidth="1" strokeLinecap="round" />
-                  
-                  {/* Wood log base */}
                   <line x1="16" y1="26" x2="24" y2="26" stroke="#C84B31" strokeWidth="1.5" strokeLinecap="round" />
                 </g>
 
@@ -132,10 +133,12 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right - Instagram link + Solid BOGO Action button */}
-          <div className="flex items-center justify-end md:w-1/3 space-x-4 md:space-x-6">
+          {/* Right Block (1/4 width on mobile, 1/3 width on desktop) */}
+          {/* Mobile: Cart Button + Table Indicator */}
+          {/* Desktop: Instagram Follow link + solid ORDER button */}
+          <div className="flex items-center justify-end w-1/4 md:w-1/3 space-x-4 md:space-x-6">
             
-            {/* Instagram Follow link (Desktop) */}
+            {/* Instagram Follow link (Desktop Only) */}
             <a 
               href="https://instagram.com/largopizzapune" 
               target="_blank" 
@@ -151,7 +154,6 @@ export default function Navbar() {
               <span>INSTAGRAM</span>
             </a>
 
-            {/* Cart & Table details panel */}
             <div className="flex items-center space-x-3">
               {tableId && (
                 <div className="hidden xs:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-largo-primary/10 border border-largo-primary/20 text-[10px] font-extrabold text-largo-primary tracking-wider uppercase animate-fade-in">
@@ -160,26 +162,31 @@ export default function Navbar() {
                 </div>
               )}
 
-              {/* Solid amber ORDER button */}
+              {/* Desktop solid amber ORDER button */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="px-5 py-2.5 bg-gradient-to-r from-largo-primary to-largo-secondary text-black font-extrabold text-xs uppercase tracking-widest rounded-sm hover:shadow-lg hover:shadow-largo-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center space-x-2"
+                className="hidden md:flex px-5 py-2.5 bg-gradient-to-r from-largo-primary to-largo-secondary text-black font-extrabold text-xs uppercase tracking-widest rounded-sm hover:shadow-lg hover:shadow-largo-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer items-center space-x-2"
               >
                 <span>ORDER</span>
                 {cartItemCount > 0 && (
-                  <span className="bg-black text-largo-primary text-[10px] font-black w-4.5 h-4.5 flex items-center justify-center rounded-full">
+                  <span className="bg-black text-largo-primary text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full ml-1.5 flex-shrink-0">
                     {cartItemCount}
                   </span>
                 )}
               </button>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile cart circular button */}
               <button
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="md:hidden p-2 rounded-md text-largo-text-muted hover:text-largo-text-primary focus:outline-none cursor-pointer"
-                aria-label="Toggle Mobile Menu"
+                onClick={() => setCartOpen(true)}
+                className="md:hidden relative p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-largo-text-primary hover:text-largo-primary transition-all duration-300 cursor-pointer"
+                aria-label="Open Cart"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <ShoppingCart className="w-5 h-5" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-largo-primary text-black font-semibold text-xs w-5 h-5 flex items-center justify-center rounded-full border-2 border-largo-bg-base">
+                    {cartItemCount}
+                  </span>
+                )}
               </button>
             </div>
 
