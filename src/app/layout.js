@@ -2,7 +2,7 @@ import { Inter, Bebas_Neue } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
-import PaymentModal from "@/components/PaymentModal";
+import FloatingCartBar from "@/components/FloatingCartBar";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
             {children}
           </main>
           <CartDrawer />
-          <PaymentModal />
+          <FloatingCartBar />
           <Footer />
         </CartProvider>
       </body>

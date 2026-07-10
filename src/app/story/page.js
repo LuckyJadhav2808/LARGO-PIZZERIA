@@ -39,6 +39,7 @@ export default function StoryPage() {
           alt="Largo Night Garden Seating"
           fill
           priority
+          sizes="100vw"
           className="object-cover object-center"
         />
         {/* Dark Overlay */}
@@ -102,6 +103,7 @@ export default function StoryPage() {
                 src="/assets/restaurant photo 1.png"
                 alt="Largo Exterior Entryway"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -112,6 +114,7 @@ export default function StoryPage() {
                 src="/assets/restaurant photo 4.png"
                 alt="Largo Table Setting Close-up"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { 
   Plus, 
   Flame, 
@@ -16,7 +17,8 @@ import {
   ChevronLeft,
   CirclePlus,
   Star,
-  Pizza
+  Pizza,
+  Sparkles
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -28,12 +30,15 @@ export default function Home() {
     orderStep, 
     updateOrderStep,
     addWaiterRequest,
-    soldOutItems
+    soldOutItems,
+    menuItems
   } = useCart();
 
   // Hero Table Input State
   const [tableInput, setTableInput] = useState("");
   const [showSyncedCheck, setShowSyncedCheck] = useState(false);
+  const [isEditingTable, setIsEditingTable] = useState(false);
+  const [tableError, setTableError] = useState("");
 
   // Sync state with tableId on mount
   useEffect(() => {
@@ -44,8 +49,14 @@ export default function Home() {
 
   const handleSyncTable = (e) => {
     e.preventDefault();
-    if (!tableInput.trim()) return;
-    syncTable(tableInput);
+    const val = parseInt(tableInput.trim(), 10);
+    if (isNaN(val) || val <= 0 || val > 99) {
+      setTableError("Please enter a valid table number (1-99).");
+      return;
+    }
+    setTableError("");
+    syncTable(val.toString());
+    setIsEditingTable(false);
     setShowSyncedCheck(true);
     setTimeout(() => {
       setShowSyncedCheck(false);
@@ -55,41 +66,28 @@ export default function Home() {
   // Menu Preview States
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const menuPreviewItems = [
-    { 
-      id: "classyrita-10", 
-      name: "Classyrita (10\")", 
-      price: 335, 
-      description: "Tomato, fresh basil, and mozzarella cheese.", 
-      icon: Pizza, 
-      category: "Slices" 
-    },
-    { 
-      id: "peppy-peppers-10", 
-      name: "Peppy Peppers (10\")", 
-      price: 335, 
-      description: "Capsicum, mixed bell peppers, and jalapenos.", 
-      icon: Flame, 
-      category: "Slices" 
-    },
-    { 
-      id: "garlic-bread", 
-      name: "Garlic Bread", 
-      price: 140, 
-      description: "Toasted baguette with whipped garlic butter.", 
-      icon: UtensilsCrossed, 
-      category: "Sides" 
-    },
-    { 
-      id: "virgin-mojito", 
-      name: "Virgin Mojito", 
-      price: 130, 
-      description: "Fresh mint, lime wedges, simple syrup, and carbonated water.", 
-      icon: GlassWater, 
-      category: "Beverages",
-      image: "/assets/mojito.png"
-    }
-  ];
+  // Map our dynamic menuItems to the home page preview cards
+  const menuPreviewItems = menuItems.filter(item => 
+    ["classyrita", "peppy-peppers", "garlic-bread", "virgin-mojito"].includes(item.id)
+  ).map(item => {
+    let iconComp = Pizza;
+    if (item.category === "On The Side") iconComp = UtensilsCrossed;
+    if (item.category === "Thirst Quenchers") iconComp = GlassWater;
+    if (item.category === "Desserts") iconComp = Sparkles;
+    
+    const priceVal = item.prices ? item.prices["10\""] : item.price;
+    const catVal = item.category === "On The Side" ? "Sides" : (item.category === "Thirst Quenchers" ? "Beverages" : "Slices");
+
+    return {
+      id: item.prices ? `${item.id}-10` : item.id,
+      name: item.prices ? `${item.name} (10")` : item.name,
+      price: priceVal,
+      description: item.description,
+      icon: iconComp,
+      category: catVal,
+      image: item.image
+    };
+  });
 
   // Filter logic
   const filteredSmallCards = activeCategory === "All"
@@ -151,40 +149,85 @@ export default function Home() {
             </div>
 
             {/* Table Sync Card */}
-            <div className="bg-largo-card-surface border border-white/10 rounded-xl p-6 shadow-xl max-w-md">
-              <h3 className="text-largo-text-muted text-sm font-semibold mb-3">
-                Sitting at a table? Enter Table Number
-              </h3>
-              <form onSubmit={handleSyncTable} className="flex gap-3">
-                <input
-                  type="text"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  placeholder="00"
-                  value={tableInput}
-                  onChange={(e) => setTableInput(e.target.value)}
-                  className="w-20 bg-largo-bg-base border border-white/10 focus:border-largo-primary focus:ring-1 focus:ring-largo-primary rounded-lg px-3 py-3 text-center font-bold text-xl text-largo-text-primary focus:outline-none transition duration-300"
-                  maxLength={3}
-                />
-                <button
-                  type="submit"
-                  className="flex-grow bg-largo-primary hover:bg-largo-secondary text-black font-bold py-3 px-6 rounded-lg uppercase tracking-wider text-sm transition duration-300 hover:shadow-lg hover:shadow-largo-primary/25"
-                >
-                  Sync Order
-                </button>
-              </form>
+            <div className="bg-largo-card-surface border border-white/10 rounded-xl p-6 shadow-xl max-w-md relative overflow-hidden">
               
-              {/* Sync Status Notifications */}
-              {showSyncedCheck && (
-                <div className="text-largo-success text-sm font-bold mt-3 flex items-center space-x-1.5 animate-pulse">
-                  <span>✓</span>
-                  <span>Table synced!</span>
+              {(!tableId || isEditingTable) ? (
+                // Input State (No table synced, or user clicked "Change Table")
+                <div className="space-y-3">
+                  <h3 className="text-largo-text-muted text-sm font-semibold">
+                    Sitting at a table? Enter Table Number
+                  </h3>
+                  <form onSubmit={handleSyncTable} className="flex gap-3">
+                    <input
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      placeholder="00"
+                      value={tableInput}
+                      onChange={(e) => {
+                        setTableInput(e.target.value);
+                        if (tableError) setTableError("");
+                      }}
+                      className="w-20 bg-largo-bg-base border border-white/10 focus:border-largo-primary focus:ring-1 focus:ring-largo-primary rounded-lg px-3 py-3 text-center font-bold text-xl text-largo-text-primary focus:outline-none transition duration-300"
+                      maxLength={2}
+                    />
+                    <button
+                      type="submit"
+                      className="flex-grow bg-largo-primary hover:bg-largo-secondary text-black font-extrabold py-3 px-6 rounded-lg uppercase tracking-wider text-xs transition duration-300 hover:shadow-lg hover:shadow-largo-primary/25 cursor-pointer"
+                    >
+                      Sync Table
+                    </button>
+                  </form>
+                  {tableError && (
+                    <p className="text-red-400 text-xs font-semibold animate-pulse">{tableError}</p>
+                  )}
+                </div>
+              ) : (
+                // Active State (Table Synced)
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-largo-success opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-largo-success"></span>
+                      </span>
+                      <div>
+                        <span className="text-[10px] text-largo-text-muted font-bold uppercase tracking-wider block">Currently Seated</span>
+                        <span className="text-lg font-bold text-largo-text-primary">Table {tableId}</span>
+                      </div>
+                    </div>
+                    <span className="bg-largo-success/10 border border-largo-success/20 text-largo-success text-[10px] font-extrabold px-2.5 py-1 rounded tracking-wide uppercase">
+                      Synced
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2.5 pt-1">
+                    <button
+                      onClick={() => setIsEditingTable(true)}
+                      className="flex-1 py-2 px-4 bg-white/5 border border-white/10 hover:bg-white/10 text-largo-text-primary text-xs font-bold rounded-lg uppercase tracking-wider transition cursor-pointer"
+                    >
+                      Change Table
+                    </button>
+                    <button
+                      onClick={() => {
+                        syncTable("");
+                        setTableInput("");
+                        setTableError("");
+                        setIsEditingTable(false);
+                      }}
+                      className="py-2 px-4 text-red-400 hover:text-red-300 text-xs font-bold transition hover:bg-red-500/5 rounded-lg cursor-pointer"
+                    >
+                      Release
+                    </button>
+                  </div>
                 </div>
               )}
-              {tableId && !showSyncedCheck && (
-                <div className="text-largo-success text-sm font-semibold mt-3 flex items-center space-x-1.5">
-                  <span className="w-2 h-2 rounded-full bg-largo-success animate-ping" />
-                  <span>Table #{tableId} Synced</span>
+
+              {/* Status Notice Popup (briefly shows after sync) */}
+              {showSyncedCheck && (
+                <div className="absolute inset-0 bg-largo-bg-base/95 flex items-center justify-center space-x-2 text-largo-success font-extrabold text-sm uppercase tracking-wider animate-fade-in z-20">
+                  <CheckCircle2 className="w-5 h-5 animate-bounce text-largo-success" />
+                  <span>Table {tableId} Synced!</span>
                 </div>
               )}
             </div>
@@ -256,6 +299,7 @@ export default function Home() {
                 src="/assets/pizza 2.png"
                 alt="Inferno Background"
                 fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
                 className="object-cover opacity-30 group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-largo-bg-base via-largo-bg-base/75 to-transparent" />
@@ -319,6 +363,7 @@ export default function Home() {
                         src={item.image}
                         alt={item.name}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover opacity-20 group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-largo-card-surface via-largo-card-surface/80 to-transparent" />
@@ -369,6 +414,17 @@ export default function Home() {
                 <span className="text-sm text-largo-text-muted">No items match this filter category.</span>
               </div>
             )}
+          </div>
+
+          {/* Explore Full Menu Button */}
+          <div className="mt-12 text-center">
+            <Link
+              href="/menu"
+              className="inline-flex items-center space-x-2 py-4 px-8 bg-gradient-to-r from-largo-primary to-largo-secondary text-black font-extrabold rounded-xl uppercase tracking-wider hover:scale-[1.02] active:scale-95 transition-all duration-300 hover:shadow-lg hover:shadow-largo-primary/20 cursor-pointer"
+            >
+              <span>Explore Full Menu</span>
+              <ChevronRight className="w-5 h-5 animate-pulse" />
+            </Link>
           </div>
 
         </div>

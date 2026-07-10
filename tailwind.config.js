@@ -12,18 +12,18 @@ module.exports = {
         foreground: "var(--foreground)",
         largo: {
           bg: {
-            base: "#0D0D11",
-            surface: "#121216",
+            base: "#0C0C0E",       // Premium dark charcoal-black (warm slate base)
+            surface: "#121214",    // Warm charcoal surface
           },
           card: {
-            surface: "#18181C",
+            surface: "#1A1A1E",    // Cozy warm slate card background
             border: "rgba(255, 255, 255, 0.05)",
           },
-          primary: "#FF9F1C",
-          secondary: "#FF6B00",
+          primary: "#E2953B",      // Honey amber (string light/woodfire glow)
+          secondary: "#C84B31",    // Terracotta red (fresh tomato/brick oven)
           text: {
-            primary: "#F5F5F0",
-            muted: "#6B6B72",
+            primary: "#F4F3EF",    // Soft cream off-white text
+            muted: "#8E8E93",      // Warm grey muted text
           },
           success: "#22C55E",
         }
