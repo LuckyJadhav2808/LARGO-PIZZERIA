@@ -40,6 +40,7 @@ module.exports = {
         float: "float 3s ease-in-out infinite",
         "marquee-left": "marquee-left 30s linear infinite",
         "marquee-right": "marquee-right 30s linear infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
       },
       keyframes: {
         float: {
@@ -53,6 +54,14 @@ module.exports = {
         "marquee-right": {
           "0%": { transform: "translateX(-50%)" },
           "100%": { transform: "translateX(0%)" },
+        },
+        "pulse-slow": {
+          "0%, 100%": {
+            transform: "translateX(-100%)",
+          },
+          "50%": {
+            transform: "translateX(100%)",
+          },
         },
       },
     },

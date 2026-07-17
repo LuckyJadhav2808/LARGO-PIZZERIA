@@ -3,8 +3,19 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { 
+  ShoppingCart, 
+  Menu, 
+  X, 
+  Home, 
+  Utensils, 
+  Star, 
+  BookOpen, 
+  MapPin, 
+  Lock 
+} from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { AnimeNavBar } from "@/components/ui/anime-navbar";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -14,23 +25,27 @@ export default function Navbar() {
   // Calculate total items in the cart
   const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+  // Navigation routes list with respective icons for mobile/desktop collapsed renderers
   const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Full Menu", href: "/menu" },
-    { label: "Reviews", href: "/reviews" },
-    { label: "Our Story", href: "/story" },
-    { label: "Locate Outlets", href: "/outlets" },
-    { label: "Admin Panel", href: "/admin" },
+    { name: "Home", url: "/", icon: Home },
+    { name: "Menu", url: "/menu", icon: Utensils },
+    { name: "Reviews", url: "/reviews", icon: Star },
+    { name: "Story", url: "/story", icon: BookOpen },
+    { name: "Outlets", url: "/outlets", icon: MapPin },
+    { name: "Admin", url: "/admin", icon: Lock },
   ];
 
   return (
-    <header className="sticky top-3 sm:top-5 mx-auto w-[94%] sm:w-[92%] max-w-7xl rounded-xl sm:rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] glassmorphism bg-black/50 z-40 backdrop-blur-md transition-all duration-300">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className="sticky top-3 sm:top-5 mx-auto w-[94%] sm:w-[92%] max-w-7xl rounded-xl sm:rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-40 transition-all duration-300">
+      {/* Background layer with glassmorphism to prevent clipping of absolute children */}
+      <div className="absolute inset-0 rounded-xl sm:rounded-2xl glassmorphism bg-black/50 -z-10 overflow-hidden pointer-events-none" />
+
+      <div className="px-4 sm:px-6 lg:px-8 relative z-10 overflow-visible">
+        <div className="flex items-center justify-between h-20 overflow-visible">
           
           {/* Left Block (1/4 width on mobile, 1/3 width on desktop) */}
           {/* Mobile: Hamburger Menu Button */}
-          {/* Desktop: Custom Nav Links Grid */}
+          {/* Desktop: Brand Logo Lockup */}
           <div className="flex md:hidden w-1/4 justify-start">
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -41,79 +56,9 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="hidden md:flex items-center space-x-8 w-1/3 justify-start py-2">
-            {/* Column 1: Boxed HOME & OUTLETS */}
-            <div className="flex flex-col items-center">
-              <Link 
-                href="/" 
-                className={`border border-largo-primary/60 px-3.5 py-1 text-[11px] uppercase font-black tracking-wider transition rounded-sm ${
-                  pathname === "/" 
-                    ? "bg-largo-primary text-black border-largo-primary" 
-                    : "text-largo-primary hover:bg-largo-primary/10 hover:border-largo-primary"
-                }`}
-              >
-                HOME
-              </Link>
-              <Link 
-                href="/outlets" 
-                className={`text-[9px] uppercase font-extrabold tracking-widest mt-1.5 transition ${
-                  pathname === "/outlets" ? "text-largo-primary" : "text-largo-text-muted hover:text-largo-text-primary"
-                }`}
-              >
-                OUTLETS
-              </Link>
-            </div>
-            
-            {/* Column 2: MENU & ADMIN */}
-            <div className="flex flex-col items-start justify-center">
-              <Link 
-                href="/menu" 
-                className={`text-xs uppercase font-extrabold tracking-widest transition ${
-                  pathname === "/menu" ? "text-largo-primary" : "text-largo-text-muted hover:text-largo-text-primary"
-                }`}
-              >
-                MENU
-              </Link>
-              <Link 
-                href="/admin" 
-                className={`text-[9px] uppercase font-extrabold tracking-widest mt-1.5 transition ${
-                  pathname === "/admin" ? "text-largo-primary" : "text-largo-text-muted hover:text-largo-text-primary"
-                }`}
-              >
-                ADMIN
-              </Link>
-            </div>
-
-            {/* Column 3: REVIEWS */}
-            <div className="flex items-center h-full">
-              <Link 
-                href="/reviews" 
-                className={`text-xs uppercase font-extrabold tracking-widest transition ${
-                  pathname === "/reviews" ? "text-largo-primary" : "text-largo-text-muted hover:text-largo-text-primary"
-                }`}
-              >
-                REVIEWS
-              </Link>
-            </div>
-
-            {/* Column 4: OUR STORY */}
-            <div className="flex items-center h-full">
-              <Link 
-                href="/story" 
-                className={`text-xs uppercase font-extrabold tracking-widest transition ${
-                  pathname === "/story" ? "text-largo-primary" : "text-largo-text-muted hover:text-largo-text-primary"
-                }`}
-              >
-                STORY
-              </Link>
-            </div>
-          </div>
-
-          {/* Center Block - Brand Logo (2/4 width on mobile, 1/3 width on desktop) */}
-          <div className="flex justify-center w-2/4 md:w-1/3">
+          <div className="hidden md:flex items-center w-1/3 justify-start">
             <Link href="/" className="group flex items-center space-x-2 transition duration-300 select-none">
               <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[42px] sm:h-[46px] w-auto">
-                {/* Circular Badge Icon */}
                 <g className="group-hover:rotate-12 transition-transform duration-500 origin-[20px_20px]">
                   <circle cx="20" cy="20" r="18" stroke="#E2953B" strokeWidth="1.5" strokeDasharray="3 3" />
                   <circle cx="20" cy="20" r="15" stroke="#C84B31" strokeWidth="1" />
@@ -123,14 +68,37 @@ export default function Navbar() {
                   <path d="M22 13 Q20 11 22 10" stroke="#C84B31" strokeWidth="1" strokeLinecap="round" />
                   <line x1="16" y1="26" x2="24" y2="26" stroke="#C84B31" strokeWidth="1.5" strokeLinecap="round" />
                 </g>
-
-                {/* Brand Typography */}
                 <g transform="translate(48, 0)">
                   <text x="0" y="22" fill="#E2953B" fontSize="22" fontWeight="900" fontFamily="var(--font-bebas-neue), sans-serif" letterSpacing="0.1em" className="group-hover:fill-largo-secondary transition-colors duration-300">LARGO</text>
                   <text x="0" y="32" fill="#F4F3EF" fontSize="8" fontWeight="bold" fontFamily="var(--font-inter), sans-serif" letterSpacing="0.28em" opacity="0.7">PIZZERIA</text>
                 </g>
               </svg>
             </Link>
+          </div>
+
+          {/* Center Block (2/4 width on mobile, 1/3 width on desktop) */}
+          {/* Mobile: Centered Logo */}
+          {/* Desktop: Animated Pizza Mascot Navbar */}
+          <div className="flex md:hidden justify-center w-2/4">
+            <Link href="/" className="flex items-center select-none">
+              <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[38px] w-auto">
+                <circle cx="20" cy="20" r="18" stroke="#E2953B" strokeWidth="1.5" strokeDasharray="3 3" />
+                <circle cx="20" cy="20" r="15" stroke="#C84B31" strokeWidth="1" />
+                <path d="M12 24 C 12 14, 28 14, 28 24" stroke="#E2953B" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M20 15 L16 23 L24 23 Z" fill="#E2953B" />
+                <path d="M18 12 Q20 10 20 13" stroke="#C84B31" strokeWidth="1" strokeLinecap="round" />
+                <path d="M22 13 Q20 11 22 10" stroke="#C84B31" strokeWidth="1" strokeLinecap="round" />
+                <line x1="16" y1="26" x2="24" y2="26" stroke="#C84B31" strokeWidth="1.5" strokeLinecap="round" />
+                <g transform="translate(48, 0)">
+                  <text x="0" y="22" fill="#E2953B" fontSize="22" fontWeight="900" fontFamily="var(--font-bebas-neue), sans-serif" letterSpacing="0.1em">LARGO</text>
+                  <text x="0" y="32" fill="#F4F3EF" fontSize="8" fontWeight="bold" fontFamily="var(--font-inter), sans-serif" letterSpacing="0.28em" opacity="0.7">PIZZERIA</text>
+                </g>
+              </svg>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex justify-center w-1/3 overflow-visible">
+            <AnimeNavBar items={navLinks} defaultActive="Home" />
           </div>
 
           {/* Right Block (1/4 width on mobile, 1/3 width on desktop) */}
@@ -165,7 +133,7 @@ export default function Navbar() {
               {/* Desktop solid amber ORDER button */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="hidden md:flex px-5 py-2.5 bg-gradient-to-r from-largo-primary to-largo-secondary text-black font-extrabold text-xs uppercase tracking-widest rounded-sm hover:shadow-lg hover:shadow-largo-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer items-center space-x-2"
+                className="hidden md:flex px-5 py-2.5 bg-gradient-to-r from-largo-primary to-largo-secondary text-black font-extrabold text-xs uppercase tracking-widest rounded-sm hover:shadow-lg hover:shadow-largo-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer items-center space-x-2 animate-fade-in"
               >
                 <span>ORDER</span>
                 {cartItemCount > 0 && (
@@ -197,21 +165,34 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Nav Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/5 bg-largo-bg-surface/95 backdrop-blur-md px-4 py-4 space-y-3 rounded-b-xl">
+        <div className="md:hidden border-t border-white/5 bg-largo-bg-surface/95 backdrop-blur-md px-4 py-4 space-y-3 rounded-b-xl animate-fade-in">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.url;
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={link.url}
+                href={link.url}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3 py-2.5 rounded-lg text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+                className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
                   isActive
                     ? "bg-largo-primary/10 text-largo-primary border-l-4 border-largo-primary"
                     : "text-largo-text-muted hover:bg-white/5 hover:text-largo-text-primary"
                 }`}
               >
-                {link.label}
+                {isActive && (
+                  <span className="mr-2 flex-shrink-0 animate-bounce">
+                    <svg viewBox="0 0 40 40" className="w-5 h-5 select-none drop-shadow-sm inline-block">
+                      <path d="M 6 12 C 12 7, 28 7, 34 12" stroke="#A04000" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 6 12 C 12 7, 28 7, 34 12" stroke="#E59866" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+                      <path d="M 8 13.5 L 20 35 L 32 13.5 Z" fill="#F4D03F" />
+                      <path d="M 10 14 L 20 32 L 30 14 Z" fill="#F5B041" />
+                      <circle cx="14" cy="18" r="2.2" fill="#C84B31" />
+                      <circle cx="26" cy="18" r="2.2" fill="#C84B31" />
+                      <circle cx="20" cy="25" r="1.8" fill="#C84B31" />
+                    </svg>
+                  </span>
+                )}
+                <span>{link.name === "Admin" ? "Admin Panel" : link.name}</span>
               </Link>
             );
           })}

@@ -1,0 +1,57 @@
+.pizza-mascot-wrap {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pizza-mascot {
+  cursor: pointer;
+  transform-origin: center bottom;
+  animation: pizza-bob 2.4s ease-in-out infinite;
+}
+
+.pizza-eye {
+  transform-origin: center;
+  animation: pizza-blink 3.5s infinite;
+}
+
+.arm-wave {
+  transform-origin: 70px 130px;
+}
+
+.pizza-mascot:hover .arm-wave,
+.active-wave {
+  animation: pizza-wave 0.6s ease-in-out infinite;
+}
+
+.steam-puff {
+  animation: pizza-steam 1.8s ease-out infinite;
+}
+
+.steam-puff:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.steam-puff:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes pizza-bob {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes pizza-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes pizza-steam {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  100% { transform: translateY(-30px) scale(1.4); opacity: 0; }
+}
+
+@keyframes pizza-wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-25deg); }
+}
